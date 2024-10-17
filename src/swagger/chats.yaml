@@ -1,0 +1,278 @@
+components:
+  schemas:
+    ChatResponseBody:
+      type: object
+      required:
+        - body
+        - type
+        - timestamp
+        - to
+      properties:
+        body:
+          type: string
+          description: The text or caption (image, video) of message
+        type:
+          type: string
+          description: The type of message
+        timestamp:
+          type: number
+          description: the timestamp of send message
+        to:
+          type: string
+          description: The remoteId recive`s message
+      example:
+        body: hello world!
+        type: image
+        timestamp: 1714997315
+        to: 5561987665432@us.g
+    Chat:
+      type: object
+      required:
+        - id
+        - remoteId
+        - clientId
+        - messages
+      properties:
+        id:
+          type: string
+          description: The auto-generated id of the chat for MongoDB
+        remoteId:
+          type: string
+          description: The ID of the WhatsApp user
+        clientId:
+          type: string
+          description: The ID of your client
+        messages:
+          type: array
+          description: The user messages for that client
+      example:
+        id: d5fE_asz
+        remoteId: 5561987665432@us.g
+        clientId: client_01
+        messages: [Hello, world!]
+    ChatRequestBody:
+      type: object
+      required:
+        - remoteId
+        - clientId
+        - message
+      properties:
+        remoteId:
+          type: string
+          description: The ID of the WhatsApp user
+        clientId:
+          type: string
+          description: The ID of the WhatsApp client
+        message:
+          type: object
+          description: The message to be sent
+        mimeType:
+           type: string
+           description: MIME type of the attachment
+        media:
+           type: string
+           description: Base64-encoded data of the file
+      example:
+        clientId: client_01
+        remoteId: 5561987665432@c.us
+        message: "Hello world!"
+        mimeType: image/jpeg
+        media: ewogICJjbGllbnRJZCI6ICJ...
+    Message:
+      type: object
+      required:
+        - ack
+        - body
+        - deviceType
+        - forwardingScore
+        - from
+        - fromMe
+        - hasMedia
+        - hasQuotedMsg
+        - hasReaction
+        - id
+        - isForwarded
+        - isGif
+        - isStarred
+        - isStatus
+        - links
+        - mentionedIds
+        - timestamp
+        - to
+        - type
+        - vCards
+      properties:
+        ack:
+          type: number
+          description: If the message was received by the recipient
+        body:
+          type: string
+          description: The message text
+        deviceType:
+          type: string
+          description: The device type
+        forwardingScore:
+          type: number
+          description: The forwarding score
+        from:
+          type: string
+          description: The number the message came from
+        fromMe:
+          type: boolean
+          description: If the message is from you
+        hasMedia:
+          type: boolean
+          description: If the message has media
+        hasQuotedMsg:
+          type: boolean
+          description: If the message has quotes
+        hasReaction:
+          type: boolean
+          description: If the message has reaction
+        id:
+          type: object
+          description: The id of the message in WhatsApp
+        isForwarded:
+          type: boolean
+          description: If the message is forwarded
+        isGif:
+          type: boolean
+          description: If the message is a gif
+        isStarred:
+          type: boolean
+          description: If the message is starred
+        isStatus:
+          type: boolean
+          description: If the message is a status
+        links:
+          type: array
+          description: The links
+        mentionedIds:
+          type: array
+          description: The mentioned IDs
+        timestamp:
+          type: number
+          description: The message's timestamp
+        to:
+          type: string
+          description: Who the message was sent to
+        type:
+          type: string
+          description: The message type
+        vCards:
+          type: array
+          description: The vCards
+      example:
+        ack: d5fE_asz
+        body: +5561987665432@us.g
+        deviceType: ios
+        forwardingScore: 0
+        from: 120363277863324828@g.us
+        fromMe: false
+        hasMedia: false
+        hasQuotedMsg: true
+        hasReaction: false
+        id: {froMe: false, remote: 120363288861124838@g.us, 3A6E2EFG79125C4B0FF1, participant: 5521983148987@c.us}
+        isForwarded: false
+        isGif: false
+        isStarred: false
+        isStatus: false
+        links: []
+        mentionedIds: []
+        timestamp: 1712155837
+        to: 556182639146@c.us
+        type: chat
+        vCards: []
+
+tags:
+  - name: Chats
+    description: Operations with chat messages
+/chats/{clientId}:
+  get:
+    summary: Get the clients' chats
+    tags: [Chats]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+      - in: query
+        name: limit
+        schema:
+          type: string
+        required: true
+        description: The limit of returns chats  
+      - in: query
+        name: page
+        schema:
+          type: string
+        required: true
+        description: The page of returns chats    
+    responses:
+      200:
+        description: The client's chats by clientId
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Chat'
+      404:
+        description: The chat was not found
+/chats/getMessage/{clientId}/{wppNumber}:
+  get:
+    summary: get messages od chat
+    tags: [Chats]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+      - in: path
+        name: wppNumber
+        schema:
+          type: string
+        required: true
+        description: The whatsapp number to get messages
+      - in: query
+        name: limit
+        schema:
+          type: string
+        required: true
+        description: The limit of returns chats  
+      - in: query
+        name: page
+        schema:
+          type: string
+        required: true
+        description: The page of returns chats    
+    responses:
+      200:
+        description: The client's chats by clientId
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Chat'
+      404:
+        description: The chat was not found
+/chats/sendMessage:
+  post:
+    summary: Send a new message
+    tags: [Chats]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ChatRequestBody'
+    responses:
+      200:
+        description: The created chat.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatResponseBody'
+      500:
+        description: Some server error

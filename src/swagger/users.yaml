@@ -1,0 +1,132 @@
+components:
+  schemas:
+
+    User:
+      type: object
+      required:
+        - userId
+        - name
+        - email
+        - birthDate
+        - clients
+      properties:
+        userId:
+          type: string
+          description: The auto-generated id of the user owner for MongoDB
+        name:
+          type: string
+          description: User's name
+        email:
+          type: string
+          description: User's email
+        birthDate:
+          type: string
+          description: User's birth date
+        clients:
+          type: array
+          description: User's WhatsApp clients
+      example:
+        userId: 6611a9852a73e64431289e5d
+        wppNumber: "5561982501719"
+        name: Fulano da Silva
+        email: fulano@email.com
+        birthDate: 1970-12-06
+        clients: [{"userId": "7722a9852a73e64431289e6e", "wppNumber": "5561982501719", "name": "Super Loja"}]
+
+tags:
+  name: Users
+  description: Operations with users
+
+/users:
+  get:
+    summary: Lists all the users
+    tags: [Users]
+    responses:
+      200:
+        description: The list of the saved users
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/User'
+  post:
+    summary: Create a new user
+    tags: [Users]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+    responses:
+      200:
+        description: The created user.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      500:
+        description: Some server error
+/users/{userId}:
+  get:
+    summary: Get the user by id
+    tags: [Users]
+    parameters:
+      - in: path
+        name: userId
+        schema:
+          type: string
+        required: true
+        description: The user id
+    responses:
+      200:
+        description: The user response by id
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      404:
+        description: The user was not found
+  put:
+   summary: Update the user by the id
+   tags: [Users]
+   parameters:
+     - in: path
+       name: userId
+       schema:
+         type: string
+       required: true
+       description: The user id
+   requestBody:
+     required: true
+     content:
+       application/json:
+         schema:
+           $ref: '#/components/schemas/User'
+   responses:
+     200:
+       description: The user was updated
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/User'
+     404:
+       description: The user was not found
+     500:
+       description: Some error happened
+  delete:
+    summary: Remove the user by id
+    tags: [Users]
+    parameters:
+      - in: path
+        name: userId
+        schema:
+          type: string
+        required: true
+        description: The user id
+    responses:
+      200:
+        description: The user was deleted
+      404:
+        description: The user was not found

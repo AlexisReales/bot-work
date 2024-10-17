@@ -1,0 +1,330 @@
+components:
+  schemas:
+    GroupRequestBodyPut:
+      type: object
+      properties:
+        remoteId:
+          type: string
+          description: The WhatsApp ID of the group to update
+        subject:
+          type: string
+          description: The title of the group
+        description:
+          type: string
+          description: The description of the group
+        mimeType:
+          type: string
+          description: The MIME type of the group's new image
+        media:
+          type: string
+          description: The base64 string for the group's new image
+        withLabel:
+          type: string
+          description: The label to filter and update all groups containing it
+        adminsOnly:
+          type: boolean
+          description: Decide if only admins can send messages and change group info
+      example:
+        remoteId: 1234567890@g.us
+        subject: Grupo de Vendas
+        description: Este é o grupo da equipe de vendas
+        mimeType: image/png
+        media: ey3910c04389c029...
+        withLabel: Vendas
+        adminsOnly: true
+    GroupRequestBody:
+      type: object
+      required:
+        - title
+        - participants
+      properties:
+        title:
+          type: string
+          description: The title of the group
+        participants:
+          type: array
+          description: An array of strings for wpp ids of each member
+      example:
+        title: Grupo de Vendas
+        participants: ["556187665432@c.us"]
+    GroupRequestBodyInvite:
+      type: object
+      required:
+        - clientId
+        - remoteId
+        - label
+      properties:
+        clientId:
+          type: string
+          description: The client's ID
+        remoteId:
+          type: string
+          description: The group's ID
+        label:
+          type: string
+          description: The group's label to filter
+      example:
+        clientId: 66edf829x
+        remoteId: 1234567890@g.us
+        label: Vendas
+    Group:
+      type: object
+      required:
+        - groupMetadata
+        - id
+        - name
+        - isGroup
+        - isReadOnly
+        - unreadCount
+        - timestamp
+        - pinned
+        - muteExpiration
+        - lastMessage
+      properties:
+        groupMetadata:
+          type: object
+          description: The auto-generated group metadata
+        id:
+          type: object
+          description: The wpp group id
+        name:
+          type: string
+          description: Group name
+        isGroup:
+          type: boolean
+          description: If the chat is a group
+        isReadOnly:
+          type: boolean
+          description: If the chat is read only
+        unreadCount:
+          type: number
+          description: Number of unread messages
+        timestamp:
+          type: number
+          description: Timestamp
+        pinned:
+          type: boolean
+          description: If the chat is pinned
+        muteExpiration:
+          type: number
+          description: Mute expiration
+        lastMessage:
+          type: object
+          description: Last message details
+tags:
+  name: Groups
+  description: Operations with groups
+/groups/{clientId}:
+  get:
+    summary: Get the group by id
+    tags: [Groups]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+    responses:
+      200:
+        description: The requested group
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      404:
+        description: The group was not found
+  post:
+    summary: Create a group
+    tags: [Groups]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+    requestBody:
+     required: true
+     content:
+       application/json:
+         schema:
+           $ref: '#/components/schemas/GroupRequestBody'
+    responses:
+      200:
+        description: The new group
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      404:
+        description: The group was not found
+  put:
+    summary: Update a group
+    tags: [Groups]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+    requestBody:
+     required: true
+     content:
+       application/json:
+         schema:
+           $ref: '#/components/schemas/GroupRequestBodyPut'
+    responses:
+      200:
+        description: The updated group
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      404:
+        description: The group was not found
+
+/groups/{clientId}/{remoteId}:
+  get:
+    summary: Get a client's group by id
+    tags: [Groups]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+      - in: path
+        name: remoteId
+        schema:
+          type: string
+        required: true
+        description: The remote id
+    responses:
+      200:
+        description: The requested group
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      404:
+        description: The group was not found
+  delete:
+    summary: Delete a client's group by id
+    tags: [Groups]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+      - in: path
+        name: remoteId
+        schema:
+          type: string
+        required: true
+        description: The remote id
+    responses:
+      200:
+        description: Group deleted
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      404:
+        description: The group was not found
+        
+/groups/labels/{clientId}/{remoteId}:
+  get:
+    summary: Get a group's labels
+    tags: [Groups]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+      - in: path
+        name: remoteId
+        schema:
+          type: string
+        required: true
+        description: The remote id
+    responses:
+      200:
+        description: The group's labels
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      404:
+        description: The group was not found
+  post:
+    summary: Add label to group
+    tags: [Groups]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+      - in: path
+        name: remoteId
+        schema:
+          type: string
+        required: true
+        description: The remote id
+    requestBody:
+     required: true
+     content:
+       application/json:
+         schema:
+           $ref: '#/components/schemas/GroupRequestBody'
+    responses:
+      200:
+        description: The label was added
+      404:
+        description: The group was not found
+  delete:
+    summary: Delete label from a group
+    tags: [Groups]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+      - in: path
+        name: remoteId
+        schema:
+          type: string
+        required: true
+        description: The remote id
+    responses:
+      200:
+        description: Label deleted from group
+      404:
+        description: The group was not found
+
+/groups/invites/get:
+  post:
+    summary: Get invite link for a group
+    tags: [Groups]
+    requestBody:
+     required: true
+     content:
+       application/json:
+         schema:
+           $ref: '#/components/schemas/GroupRequestBodyInvite'
+    responses:
+      200:
+        description: The link is returned
+      404:
+        description: The group was not found
+  

@@ -1,0 +1,152 @@
+components:
+  schemas:
+    Client:
+      type: object
+      required:
+        - userId
+        - wppNumber
+        - name
+      properties:
+        userId:
+          type: string
+          description: The auto-generated id of the user owner for MongoDB
+        wppNumber:
+          type: wppNumber
+          description: The wpp user number 
+        name:
+          type: name
+          description: Client name
+      example:
+        userId: 6611a9852a73e64431289e5d
+        wppNumber: "5561982501719"
+        name: Loja 1
+tags:
+  name: Clients
+  description: Operations with clients (partners of the marketplace)
+/clients:
+  get:
+    summary: Lists all the clients
+    tags: [Clients]
+    responses:
+      200:
+        description: The list of the saved clients
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Client'
+  post:
+    summary: Create a new client
+    tags: [Clients]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Client'
+    responses:
+      200:
+        description: The created client.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      500:
+        description: Some server error
+/clients/{clientId}:
+  get:
+    summary: Get the client by id
+    tags: [Clients]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+    responses:
+      200:
+        description: The client response by id
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      404:
+        description: The book was not found
+  # put:
+  #  summary: Update the client by the id
+  #  tags: [Clients]
+  #  parameters:
+  #    - in: path
+  #      name: clientId
+  #      schema:
+  #        type: string
+  #      required: true
+  #      description: The client id
+  #  requestBody:
+  #    required: true
+  #    content:
+  #      application/json:
+  #        schema:
+  #          $ref: '#/components/schemas/Client'
+  #  responses:
+  #    200:
+  #      description: The book was updated
+  #      content:
+  #        application/json:
+  #          schema:
+  #            $ref: '#/components/schemas/Client'
+  #    404:
+  #      description: The client was not found
+  #    500:
+  #      description: Some error happened
+  # delete:
+  #   summary: Remove the client by id
+  #   tags: [Clients]
+  #   parameters:
+  #     - in: path
+  #       name: clientId
+  #       schema:
+  #         type: string
+  #       required: true
+  #       description: The client id
+  #   responses:
+  #     200:
+  #       description: The client was deleted
+  #     404:
+  #       description: The client was not found
+
+/clients/activeClient/{clientId}:
+  post:
+    summary: Active client service by id
+    tags: [Clients]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The client id
+    responses:
+      200:
+        description: The client still has no connection
+        content:
+          application/json:
+            schema:
+              type: object
+              items:
+                properties:
+                  code:
+                    type: string
+                    description: QRCode string
+              example:
+                qr-code: xxxxxxxxxxxxxxxxx
+      204:
+        description: the client is connected
+        content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/Client'
+      404:
+        description: The client was not found

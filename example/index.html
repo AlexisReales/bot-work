@@ -1,0 +1,46 @@
+<!-- This is a minimal script example of how to  -->
+<!-- connect to the socket API for a realtime chat -->
+<!-- on the frontend of a web application -->
+<!-- using socket events for message-sent -->
+<!-- and message-received triggers -->
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+<script>
+  const socket = io('http://localhost:3000', {
+    query: {
+        clientId: '661361c5b786d6153bd126d6'
+    }
+});
+
+socket.on('connect', () => {
+    console.log('Connected to server via WebSocket');
+});
+
+socket.on('message-sent', (data) => {
+    console.log('Message sent:', data);
+});
+
+socket.on('last-chats', (data) => {
+    console.log('Last chats:', data);
+});
+
+socket.on('last-messages', (data) => {
+    console.log('Last messages:', data);
+});
+
+socket.on('message-received', (data) => {
+    console.log('Message received:', data);
+});
+
+socket.on('disconnect', () => {
+    console.log('Disconnected from server');
+});
+</script>
+
+<html>
+    <body>
+        <div style="display: flex; align-items: center; justify-content: center; width: 100vw; height: 100vh;">
+            Open dev tools to inspect console logs.
+        </div>
+    </body>
+</html>

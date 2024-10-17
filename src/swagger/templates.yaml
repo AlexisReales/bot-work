@@ -1,0 +1,259 @@
+components:
+  schemas:
+
+    TemplateReq:
+      type: object
+      required:
+        - template
+      properties:
+        text:
+          type: string
+          description: text template 
+        template:
+           type: object
+           description: The template object
+           properties:
+            name:
+              type: string
+              description: Name of template
+            subName:
+              type: string
+              description: Sub identificator of template
+        content:
+           type: object
+           description: The template object
+           properties:
+            message:
+              type: string
+              description: The text message to be sent
+            mimeType:
+              type: string
+              description: MIME type of the attachment
+            media:
+              type: string
+              description: Base64-encoded data of the file
+      example:
+        content: 
+          message: caption of image or string of a text message
+          mimeType: image/jpeg
+          media: ewogICJjbGllbnRJZCI6ICJ...    
+        template: 
+          name: ebook1
+          subName: boas-vindas
+
+TemplateResp:
+      type: object
+      properties:
+        templateId: 
+          type: string
+          description: Template id
+        text:
+          type: string
+          description: text template 
+        template:
+           type: object
+           description: The template object
+           properties:
+            name:
+              type: string
+              description: Name of template
+            subName:
+              type: string
+              description: Sub identificator of template
+      example:
+        templateId: "661361c5b786d6153bd12ddd"
+        template: 
+          name: ebook1
+          subName: boas-vindas
+        content: 
+          message: caption of image or string of a text message
+          mimeType: image/jpeg
+          media: ewogICJjbGllbnRJZCI6ICJ...    
+
+
+tags:
+  name: Template
+  description: Operations with template messages
+
+/template/{userId}:
+  get:
+    summary: Get the templates schema by userId
+    tags: [Template]
+    parameters:
+      - in: path
+        name: userId
+        schema:
+          type: string
+        required: true
+        description: The user id
+    responses:
+      200:
+        description: The template response by userId
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateResp'
+      404:
+        description: The user was not found
+  post:
+    summary: Create a new template schema
+    tags: [Template]
+    parameters:
+      - in: path
+        name: userId
+        schema:
+          type: string
+        required: true
+        description: The user id
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TemplateReq'
+    responses:
+      200:
+        description: The user response by id
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateResp'
+      404:
+        description: The user was not found
+/template/{templateId}:
+  put:
+    summary: change the template schema by templateID
+    tags: [Template]
+    parameters:
+      - in: path
+        name: templateId
+        schema:
+          type: string
+        required: true
+        description: The template id
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TemplateReq'
+    responses:
+      200:
+        description: The template response by userId
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateResp'
+      404:
+        description: The user was not found
+  delete:
+    summary: delete a template schema
+    tags: [Template]
+    parameters:
+      - in: path
+        name: templateId
+        schema:
+          type: string
+        required: true
+        description: The user id
+    responses:
+      200:
+        description: The user response by id
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateResp'
+      404:
+        description: The user was not found
+/template/{userId}/{templateName}:
+  get:
+    summary: Get the templates schema by template name
+    tags: [Template]
+    parameters:
+      - in: path
+        name: userId
+        schema:
+          type: string
+        required: true
+        description: The user id
+      - in: path
+        name: templateName
+        schema:
+          type: string
+        required: true
+        description: The template name
+    responses:
+      200:
+        description: The template response by userId
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateResp'
+      404:
+        description: The user was not found
+
+/template/sendMessageTemplate/{clientId}/{wppNumber}:
+  post:
+    summary: Create a new template schema
+    tags: [Template]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The wpp client id
+      - in: path
+        name: wppNumber
+        schema:
+          type: string
+        required: true
+        description: The wpp number of customer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TemplateReq'
+    responses:
+      200:
+        description: The user response by id
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateResp'
+      404:
+        description: The user was not found
+/template/analyzeMessageTemplate/{clientId}:
+  post:
+    summary: Analyze messages template with a client Id
+    tags: [Template]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The wpp client id
+    requestBody:
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              templateName:
+                type: string
+                description: The name of the template.
+              wppNumber:
+                type: string
+                description: The WhatsApp number.
+    responses:
+      200:
+        description: The user response by id
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateResp'
+      404:
+        description: The user was not found

@@ -1,0 +1,147 @@
+components:
+  schemas:
+    Contact:
+      type: object
+      required:
+        - clientId
+        - wppNumber
+        - name
+      properties:
+        _id:
+          type: string
+          description: The auto-generated id of the contact of user owner for MongoDB
+        clientId:
+          type: string
+          description: The id of the client
+        wppNumber:
+          type: string
+          description: The id of the wpp associate to a wpp user the type @c means contact
+        name:
+          type: string
+          description: Contact's name
+      example:
+        clientId: 6611a9852a73e64431289e5d
+        wppNumber: "556192045128"
+        name: Fulano da Silva
+tags:
+  name: Contacts
+  description: Operations with contacts
+/contacts:
+  post:
+    summary: Create a new contact
+    tags: [Contacts]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Contact'
+    responses:
+      200:
+        description: The created contact.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+      500:
+        description: Some server error
+/contacts/{clientId}:
+  get:
+    summary: Get all contacts by the clientId
+    tags: [Contacts]
+    parameters:
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: The user id
+    responses:
+      200:
+        description: The contact response by clientId
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+      404:
+        description: The contact was not found
+/contacts/{clientId}/{wppNumber}:
+  get:
+    summary: Get the contact by wppNumber
+    tags: [Contacts]
+    parameters:
+      - in: path
+        name: wppNumber
+        schema:
+          type: string
+        required: true
+        description: The contact's wppNumber
+      - in: path
+        name: clientId
+        schema:
+          type: string
+        required: true
+        description: clientId friend of wppNumber  
+    responses:
+      200:
+        description: The contact response by id
+        contens:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+      404:
+        description: The contact was not found
+  put:
+   summary: Update the contact by the id
+   tags: [Contacts]
+   parameters:
+     - in: path
+       name: wppNumber
+       schema:
+         type: string
+       required: true
+       description: The contact's wppNumber
+     - in: path
+       name: clientId
+       schema:
+         type: string
+       required: true
+       description: clientId frind of wppNumber  
+   requestBody:
+     required: true
+     content:
+       application/json:
+         schema:
+           $ref: '#/components/schemas/Contact'
+   responses:
+     200:
+       description: The contact was updated
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/Contact'
+     404:
+       description: The contact was not found
+     500:
+       description: Some error happened
+  delete:
+    summary: Remove the Contacts by id
+    tags: [Contacts]
+    parameters:
+      - in: path
+        name: wppNumber
+        schema:
+          type: string
+        required: true
+        description: The contact's wppNumber
+      - in: path
+        name: clientId
+        schema:
+         type: string
+        required: true
+        description: clientId friend of wppNumber 
+    responses:
+      200:
+        description: The contact was deleted
+      404:
+        description: The contact was not found

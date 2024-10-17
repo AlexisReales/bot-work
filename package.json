@@ -40,7 +40,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "uuid": "^10.0.0",
-    "whatsapp-web.js": "https://github.com/pedroslopez/whatsapp-web.js#webpack-exodus",
+    "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus",
     "wwebjs-mongo": "^1.1.0"
   },
   "jest": {
